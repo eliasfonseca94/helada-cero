@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Helada Cero · Alerta de heladas para la Araucanía</title>
+    <meta
+      name="description"
+      content="Consulta el pronóstico de mínimas de 7 días y detecta las noches que ponen en riesgo tu cultivo."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Nevada de fondo: cubre toda la ventana, incluida la zona bajo el
+         plegado inicial. Decoración pura — fuera del árbol de accesibilidad,
+         sin capturar el puntero y siempre detrás del contenido. El marcado
+         de cada cristal lo genera Nevada.ts para no repetir 26 <span> a mano. -->
+    <div id="nevada" class="nevada" aria-hidden="true"></div>
+
+    <div class="lienzo">
+      <header class="cabecera">
+        <p class="cabecera__eyebrow">Estación de pronóstico · Región de La Araucanía</p>
+
+        <h1 class="cabecera__titulo">
+          <span class="cabecera__helada">Helada</span><span class="cabecera__cero">Cero</span>
+        </h1>
+
+        <p class="cabecera__bajada">
+          Ingresa tu parcela y su umbral crítico. Te muestro las mínimas de los próximos siete
+          días y marco las noches en que el cultivo queda expuesto.
+        </p>
+      </header>
+
+      <main class="tablero">
+        <!-- Panel de entrada -->
+        <section class="panel" aria-labelledby="titulo-formulario">
+          <h2 class="panel__titulo" id="titulo-formulario">Datos de la parcela</h2>
+
+          <form id="form-parcela" class="formulario" novalidate>
+            <div class="campo">
+              <label for="txt-nombre">Nombre de la parcela</label>
+              <input
+                type="text"
+                id="txt-nombre"
+                name="nombre"
+                placeholder="Potrero norte"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="campo">
+              <label for="sel-localidad">Localidad</label>
+              <select id="sel-localidad" name="localidad">
+                <option value="FREIRE">Freire</option>
+                <option value="TEMUCO">Temuco</option>
+                <option value="LAUTARO">Lautaro</option>
+                <option value="VILLARRICA">Villarrica</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="sel-cultivo">Cultivo</label>
+              <select id="sel-cultivo" name="cultivo">
+                <option value="HORTALIZA">Hortaliza</option>
+                <option value="FRUTAL">Frutal</option>
+                <option value="PRADERA">Pradera</option>
+                <option value="CEREAL">Cereal</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="txt-umbral">Umbral crítico (°C)</label>
+              <input
+                type="number"
+                id="txt-umbral"
+                name="umbral"
+                step="0.5"
+                min="-5"
+                max="10"
+                placeholder="2"
+              />
+              <p class="campo__ayuda">Temperatura mínima bajo la cual tu cultivo sufre daño.</p>
+            </div>
+
+            <p id="bloque-error-formulario" class="error-formulario" role="alert"></p>
+
+            <button type="submit" id="btn-consultar" class="boton boton--principal">
+              Ver pronóstico
+            </button>
+          </form>
+        </section>
+
+        <!-- Panel de resultados -->
+        <section class="resultados" aria-labelledby="titulo-resultados" aria-live="polite">
+          <h2 class="panel__titulo" id="titulo-resultados">Pronóstico de mínimas</h2>
+
+          <div id="contenedor-resumen"></div>
+
+          <div id="contenedor-pronostico" class="pronostico">
+            <p class="vacio">Sin consulta todavía. Completa el formulario para traer los datos.</p>
+          </div>
+
+          <div id="bloque-alerta" class="alerta" hidden>
+            <div class="campo">
+              <label for="txt-email">Ingresa tu mail para recibir las alertas vía email</label>
+              <input
+                type="email"
+                id="txt-email"
+                name="email"
+                placeholder="tu.correo@ejemplo.cl"
+                autocomplete="email"
+                inputmode="email"
+              />
+              <p class="campo__ayuda">
+                Te escribimos a esa dirección cada noche que quede bajo tu umbral crítico.
+              </p>
+            </div>
+
+            <div class="alerta__accion">
+              <button type="button" id="btn-alerta" class="boton boton--secundario">
+                Activar aviso de helada
+              </button>
+              <p id="mensaje-alerta" class="alerta__mensaje" role="status"></p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="pie">
+        <p>
+          Datos meteorológicos de
+          <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>
+          bajo licencia CC BY 4.0.
+        </p>
+      </footer>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
