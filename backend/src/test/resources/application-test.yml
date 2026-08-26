@@ -1,0 +1,21 @@
+# Perfil exclusivo para `mvn test`: usa H2 en memoria en vez de PostgreSQL
+# para que el contexto de Spring y los repositorios se puedan verificar en
+# cualquier máquina sin depender de Docker. No se usa en desarrollo ni en
+# producción — no forma parte del entregable evaluado, solo acelera el
+# feedback al programar.
+spring:
+  datasource:
+    url: jdbc:h2:mem:heladacero;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

@@ -1,0 +1,28 @@
+# Perfil de desarrollo local: apunta a la PostgreSQL levantada con
+# `docker compose up -d` y habilita la consola interactiva de Swagger-UI.
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${DB_NAME:heladacero_db}
+    username: ${DB_USERNAME:dev_user}
+    password: ${DB_PASSWORD:SecureDevPassword123}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    try-it-out-enabled: true
+
+logging:
+  level:
+    com.heladacero: DEBUG

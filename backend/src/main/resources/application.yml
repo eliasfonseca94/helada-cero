@@ -1,0 +1,17 @@
+# Configuración común a todos los perfiles. El perfil activo por defecto es
+# "dev" para que `./mvnw spring-boot:run` funcione sin flags adicionales en
+# la máquina de un desarrollador; en un despliegue real se sobreescribe con
+# la variable de entorno SPRING_PROFILES_ACTIVE=prod (ver README.md).
+spring:
+  application:
+    name: helada-cero-backend
+  profiles:
+    active: dev
+  jpa:
+    # Evita el patrón Open Session In View: las consultas perezosas deben
+    # resolverse explícitamente en la capa de aplicación, no arrastrarse
+    # hasta la vista/serialización HTTP.
+    open-in-view: false
+
+server:
+  port: 8080

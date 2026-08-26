@@ -68,6 +68,10 @@ src/
 - **La escala de color va de tibio a hielo.** El tablero se enfría visualmente a medida que sube el riesgo, y la helada es el único estado con textura de escarcha.
 - **El fondo simula frío: viento, escarcha y nieve cayendo por toda la pantalla.** Es puramente decorativo (`aria-hidden`, `pointer-events: none`) y respeta `prefers-reduced-motion`. Por diseño, el hielo pasa por delante de la cabecera, el formulario y el pie, pero nunca por delante de `.resultados` —el panel con el pronóstico es el único resultado que debe quedar siempre legible.
 
+## Backend (Hito 4)
+
+El repositorio incorpora en [`backend/`](backend/) un microservicio Spring Boot + PostgreSQL + Docker que persiste las parcelas registradas y documenta su API con Swagger/OpenAPI. Instrucciones completas en [`backend/README.md`](backend/README.md).
+
 ## Créditos de datos
 
 Datos meteorológicos: [Open-Meteo.com](https://open-meteo.com/) — CC BY 4.0.

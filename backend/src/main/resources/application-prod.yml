@@ -1,0 +1,24 @@
+# Perfil de producción: sin valores por defecto para credenciales (deben
+# venir sí o sí de variables de entorno) y con la documentación OpenAPI
+# completamente apagada — segunda capa de defensa además de que
+# OpenApiConfig ni siquiera se registra fuera del perfil "dev".
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+springdoc:
+  api-docs:
+    enabled: false # Bloquea la descarga de la especificación técnica
+  swagger-ui:
+    enabled: false # Devuelve 404 ante intentos de acceso a la consola web
+
+logging:
+  level:
+    com.heladacero: INFO
