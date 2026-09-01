@@ -3,3 +3,10 @@ dist
 .DS_Store
 *.local
 Detalles.md
+
+# Variables de entorno locales — nunca al control de versiones.
+# .env.example SÍ se versiona (no calza con estos patrones, no tiene secretos).
+.env
+.env.local
+.env.*.local
+.env.production

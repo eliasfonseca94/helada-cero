@@ -105,6 +105,70 @@ body::after {
    siempre legible sin importar cuánto hielo esté cayendo.
    ───────────────────────────────────────────────────────────────────── */
 
+/* ── Selector de idioma ───────────────────────────────────────────────
+   Fijo arriba a la derecha, por encima de la nevada (z-index 1) y de
+   `.resultados` (z-index 2): siempre alcanzable sin importar qué haya
+   debajo. */
+
+.selector-idioma {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.3rem;
+  background: var(--suelo);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  box-shadow: 0 10px 25px rgba(2, 6, 10, 0.35);
+}
+
+.boton-idioma {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--niebla);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition:
+    background var(--transicion),
+    color var(--transicion);
+}
+
+.boton-idioma img {
+  display: block;
+  border-radius: 2px;
+}
+
+.boton-idioma:hover {
+  color: var(--texto);
+}
+
+.boton-idioma:focus-visible {
+  outline: 2px solid var(--frio);
+  outline-offset: 2px;
+}
+
+.boton-idioma[aria-pressed="true"] {
+  background: var(--noche);
+  color: var(--hielo);
+}
+
+@media (max-width: 480px) {
+  .selector-idioma {
+    top: 0.6rem;
+    right: 0.6rem;
+  }
+}
+
 .nevada {
   position: fixed;
   inset: 0;
@@ -348,6 +412,99 @@ body::after {
 }
 
 .boton:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.formulario__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+/* ── Parcelas guardadas ───────────────────────────────────────────── */
+
+.parcelas-guardadas {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--borde);
+}
+
+.panel__subtitulo {
+  margin: 0 0 0.75rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--niebla);
+}
+
+.lista-parcelas {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.parcela-guardada {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--noche);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+}
+
+.parcela-guardada--activa {
+  border-color: var(--frio);
+}
+
+.parcela-guardada__nombre {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.parcela-guardada__detalle {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: var(--niebla);
+}
+
+.parcela-guardada__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.boton-mini {
+  padding: 0.35rem 0.6rem;
+  background: transparent;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  color: var(--texto);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transicion);
+}
+
+.boton-mini:hover:not(:disabled) {
+  border-color: var(--frio);
+}
+
+.boton-mini--peligro:hover:not(:disabled) {
+  border-color: var(--tibio);
+  color: var(--tibio);
+}
+
+.boton-mini:disabled {
   opacity: 0.55;
   cursor: progress;
 }

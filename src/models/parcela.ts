@@ -36,6 +36,14 @@ export interface Parcela {
   umbralCritico: number;
 }
 
+/**
+ * Datos que el usuario ingresa para registrar o editar una parcela: todo lo
+ * que `Parcela` tiene salvo `id` (lo asigna el backend al persistir) y
+ * `coordenada` (se deriva de `localidad` vía `COORDENADAS`, tanto en este
+ * cliente como en el propio backend — nunca viaja por HTTP).
+ */
+export type DatosParcela = Omit<Parcela, "id" | "coordenada">;
+
 /** Catálogo de coordenadas por localidad. Readonly: nadie lo muta en tiempo de ejecución. */
 export const COORDENADAS: Readonly<Record<Localidad, Coordenada>> = {
   [Localidad.FREIRE]: { latitud: -38.954, longitud: -72.627 },

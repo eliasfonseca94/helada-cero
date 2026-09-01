@@ -16,6 +16,21 @@
     />
   </head>
   <body>
+    <!-- Selector de idioma: fijo arriba a la derecha, por encima de todo lo
+         demás (incluida la nevada). Los botones los maneja main.ts; el
+         idioma activo se marca con aria-pressed, no con una clase visual
+         suelta, para que también quede anunciado a lectores de pantalla. -->
+    <div class="selector-idioma" role="group" aria-label="Selector de idioma / Language selector">
+      <button type="button" id="btn-idioma-es" class="boton-idioma" aria-pressed="true">
+        <img src="https://flagcdn.com/20x15/es.png" width="20" height="15" alt="" />
+        ES
+      </button>
+      <button type="button" id="btn-idioma-en" class="boton-idioma" aria-pressed="false">
+        <img src="https://flagcdn.com/20x15/gb-eng.png" width="20" height="15" alt="" />
+        EN
+      </button>
+    </div>
+
     <!-- Nevada de fondo: cubre toda la ventana, incluida la zona bajo el
          plegado inicial. Decoración pura — fuera del árbol de accesibilidad,
          sin capturar el puntero y siempre detrás del contenido. El marcado
@@ -24,13 +39,13 @@
 
     <div class="lienzo">
       <header class="cabecera">
-        <p class="cabecera__eyebrow">Estación de pronóstico · Región de La Araucanía</p>
+        <p class="cabecera__eyebrow" id="cabecera-eyebrow">Estación de pronóstico · Región de La Araucanía</p>
 
         <h1 class="cabecera__titulo">
           <span class="cabecera__helada">Helada</span><span class="cabecera__cero">Cero</span>
         </h1>
 
-        <p class="cabecera__bajada">
+        <p class="cabecera__bajada" id="cabecera-bajada">
           Ingresa tu parcela y su umbral crítico. Te muestro las mínimas de los próximos siete
           días y marco las noches en que el cultivo queda expuesto.
         </p>
@@ -43,7 +58,7 @@
 
           <form id="form-parcela" class="formulario" novalidate>
             <div class="campo">
-              <label for="txt-nombre">Nombre de la parcela</label>
+              <label for="txt-nombre" id="label-nombre">Nombre de la parcela</label>
               <input
                 type="text"
                 id="txt-nombre"
@@ -54,7 +69,8 @@
             </div>
 
             <div class="campo">
-              <label for="sel-localidad">Localidad</label>
+              <!-- Freire/Temuco/Lautaro/Villarrica son topónimos: no se traducen. -->
+              <label for="sel-localidad" id="label-localidad">Localidad</label>
               <select id="sel-localidad" name="localidad">
                 <option value="FREIRE">Freire</option>
                 <option value="TEMUCO">Temuco</option>
@@ -64,17 +80,17 @@
             </div>
 
             <div class="campo">
-              <label for="sel-cultivo">Cultivo</label>
+              <label for="sel-cultivo" id="label-cultivo">Cultivo</label>
               <select id="sel-cultivo" name="cultivo">
-                <option value="HORTALIZA">Hortaliza</option>
-                <option value="FRUTAL">Frutal</option>
-                <option value="PRADERA">Pradera</option>
-                <option value="CEREAL">Cereal</option>
+                <option id="opt-hortaliza" value="HORTALIZA">Hortaliza</option>
+                <option id="opt-frutal" value="FRUTAL">Frutal</option>
+                <option id="opt-pradera" value="PRADERA">Pradera</option>
+                <option id="opt-cereal" value="CEREAL">Cereal</option>
               </select>
             </div>
 
             <div class="campo">
-              <label for="txt-umbral">Umbral crítico (°C)</label>
+              <label for="txt-umbral" id="label-umbral">Umbral crítico (°C)</label>
               <input
                 type="number"
                 id="txt-umbral"
@@ -84,15 +100,28 @@
                 max="10"
                 placeholder="2"
               />
-              <p class="campo__ayuda">Temperatura mínima bajo la cual tu cultivo sufre daño.</p>
+              <p class="campo__ayuda" id="ayuda-umbral">Temperatura mínima bajo la cual tu cultivo sufre daño.</p>
             </div>
 
             <p id="bloque-error-formulario" class="error-formulario" role="alert"></p>
 
-            <button type="submit" id="btn-consultar" class="boton boton--principal">
-              Ver pronóstico
-            </button>
+            <div class="formulario__acciones">
+              <button type="submit" id="btn-consultar" class="boton boton--principal">
+                Guardar y ver pronóstico
+              </button>
+              <button type="button" id="btn-cancelar-edicion" class="boton boton--secundario" hidden>
+                Cancelar edición
+              </button>
+            </div>
           </form>
+
+          <div class="parcelas-guardadas">
+            <h3 class="panel__subtitulo" id="titulo-guardadas">Parcelas guardadas</h3>
+            <p id="bloque-error-guardadas" class="error-formulario" role="alert"></p>
+            <ul id="lista-parcelas-guardadas" class="lista-parcelas">
+              <li class="vacio">Cargando parcelas guardadas…</li>
+            </ul>
+          </div>
         </section>
 
         <!-- Panel de resultados -->
@@ -107,7 +136,7 @@
 
           <div id="bloque-alerta" class="alerta" hidden>
             <div class="campo">
-              <label for="txt-email">Ingresa tu mail para recibir las alertas vía email</label>
+              <label for="txt-email" id="label-email">Ingresa tu mail para recibir las alertas vía email</label>
               <input
                 type="email"
                 id="txt-email"
@@ -116,7 +145,7 @@
                 autocomplete="email"
                 inputmode="email"
               />
-              <p class="campo__ayuda">
+              <p class="campo__ayuda" id="ayuda-email">
                 Te escribimos a esa dirección cada noche que quede bajo tu umbral crítico.
               </p>
             </div>
@@ -132,7 +161,7 @@
       </main>
 
       <footer class="pie">
-        <p>
+        <p id="pie-texto">
           Datos meteorológicos de
           <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>
           bajo licencia CC BY 4.0.

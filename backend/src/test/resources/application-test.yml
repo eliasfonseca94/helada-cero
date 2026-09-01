@@ -3,6 +3,10 @@
 # cualquier máquina sin depender de Docker. No se usa en desarrollo ni en
 # producción — no forma parte del entregable evaluado, solo acelera el
 # feedback al programar.
+app:
+  cors:
+    allowed-origins: http://localhost:5173
+
 spring:
   datasource:
     url: jdbc:h2:mem:heladacero;MODE=PostgreSQL

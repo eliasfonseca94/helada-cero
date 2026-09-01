@@ -3,6 +3,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Secretos y configuración local (nunca al control de versiones) ###
+.env
+.env.local
+application-local.yml
+application-secrets.yml
+
 ### STS ###
 .apt_generated
 .classpath
