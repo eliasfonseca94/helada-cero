@@ -1,6 +1,7 @@
 import type { Parcela } from "../models/parcela";
 import type { DiaPronostico } from "../models/pronostico";
 import { NivelRiesgo } from "../models/pronostico";
+import { obtenerTextosActuales } from "../i18n/textos";
 
 /** Cuerpo que se enviaría a un backend real de notificaciones. */
 export interface SolicitudAlerta {
@@ -59,21 +60,24 @@ export async function registrarAlerta(
 
   await esperar(LATENCIA_SIMULADA_MS);
 
+  const textos = obtenerTextosActuales();
+
   // Validaciones del lado del "servidor": entran al catch de quien llama.
   if (!esEmailValido(solicitud.email)) {
-    throw new Error(
-      "El servicio de correo rechazó la dirección. Revisa que esté bien escrita e inténtalo de nuevo.",
-    );
+    throw new Error(textos.alertaErrorEmailRechazado);
   }
 
   if (solicitud.diasEnRiesgo.length === 0) {
-    throw new Error(
-      "No hay días bajo el umbral en esta ventana. La alerta no se registró porque no habría nada que notificar.",
-    );
+    throw new Error(textos.alertaErrorSinNochesRiesgo);
   }
 
   return {
     folio: `AL-${Date.now().toString(36).toUpperCase()}`,
-    mensaje: `Listo: enviaremos a ${solicitud.email} el aviso de ${solicitud.diasEnRiesgo.length} noche(s) bajo ${parcela.umbralCritico} °C en ${parcela.nombre}.`,
+    mensaje: textos.alertaConfirmacion(
+      solicitud.email,
+      solicitud.diasEnRiesgo.length,
+      parcela.umbralCritico,
+      parcela.nombre,
+    ),
   };
 }

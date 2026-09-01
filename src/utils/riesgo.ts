@@ -1,4 +1,8 @@
+import { obtenerIdioma } from "../i18n/idioma";
 import { NivelRiesgo } from "../models/pronostico";
+
+/** `Intl.toLocaleDateString` no acepta "es"/"en": necesita el locale completo. */
+const LOCALE_POR_IDIOMA = { es: "es-CL", en: "en-US" } as const;
 
 /** Margen de anticipación: bajo umbral + este delta ya se considera vigilancia. */
 const MARGEN_VIGILANCIA = 3;
@@ -20,7 +24,10 @@ export function clasificarRiesgo(minima: number, umbralCritico: number): NivelRi
   return NivelRiesgo.SEGURO;
 }
 
-/** Convierte "2026-08-07" en "jue 7 ago" usando la configuración regional chilena. */
+/**
+ * Convierte "2026-08-07" en "jue 7 ago" (o "Thu, Aug 7" en inglés), según el
+ * idioma activo en `i18n/idioma.ts`.
+ */
 export function formatearFecha(isoFecha: string): string {
   const partes = isoFecha.split("-").map((parte) => Number.parseInt(parte, 10));
   const [anio, mes, dia] = partes;
@@ -28,7 +35,7 @@ export function formatearFecha(isoFecha: string): string {
     return isoFecha;
   }
   const fecha = new Date(anio, mes - 1, dia);
-  return fecha.toLocaleDateString("es-CL", {
+  return fecha.toLocaleDateString(LOCALE_POR_IDIOMA[obtenerIdioma()], {
     weekday: "short",
     day: "numeric",
     month: "short",

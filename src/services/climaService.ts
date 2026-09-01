@@ -6,6 +6,7 @@ import type {
   RespuestaClimaApi,
 } from "../models/pronostico";
 import { clasificarRiesgo } from "../utils/riesgo";
+import { obtenerTextosActuales } from "../i18n/textos";
 
 const URL_BASE = "https://api.open-meteo.com/v1/forecast";
 const ZONA_HORARIA = "America/Santiago";
@@ -13,10 +14,6 @@ const DIAS_PRONOSTICO = 7;
 
 /** Tiempo máximo que se le concede al servicio antes de cortar la espera. */
 const ESPERA_MAXIMA_MS = 5000;
-
-/** Mensaje exacto que ve el usuario cuando el servidor no contesta en 5 s. */
-export const MENSAJE_SERVIDOR_SIN_RESPUESTA =
-  "El servidor presenta problemas, vuelve a intentarlo mas tarde";
 
 /** Construye la URL del endpoint sin concatenar cadenas a mano. */
 function construirUrl(parcela: Parcela): string {
@@ -64,15 +61,16 @@ function esErrorApi(datos: unknown): datos is ErrorClimaApi {
  * el `reason` que manda la API si viene, o el código HTTP como respaldo.
  */
 async function describirRespuestaFallida(respuesta: Response): Promise<string> {
+  const textos = obtenerTextosActuales();
   try {
     const cuerpo: unknown = await respuesta.json();
     if (esErrorApi(cuerpo)) {
-      return `El servicio meteorológico rechazó la consulta: ${cuerpo.reason}`;
+      return textos.climaErrorRechazo(cuerpo.reason);
     }
   } catch {
     // Cuerpo vacío o que no es JSON: se cae al mensaje genérico de abajo.
   }
-  return `El servicio meteorológico respondió con código ${respuesta.status}. Reintenta en unos minutos.`;
+  return textos.climaErrorHttp(respuesta.status);
 }
 
 /**
@@ -89,7 +87,7 @@ async function pedirConEspera(url: string): Promise<Response> {
   } catch (error: unknown) {
     // Un abort no es un fallo de red, es nuestro propio corte por tiempo.
     if (controlador.signal.aborted) {
-      throw new Error(MENSAJE_SERVIDOR_SIN_RESPUESTA);
+      throw new Error(obtenerTextosActuales().errorServidorSinRespuesta);
     }
     throw error;
   } finally {
@@ -135,13 +133,13 @@ export async function obtenerPronostico(parcela: Parcela): Promise<Pronostico> {
   const datos: unknown = await respuesta.json();
 
   if (!esRespuestaValida(datos)) {
-    throw new Error("La respuesta del servicio no trae datos diarios utilizables.");
+    throw new Error(obtenerTextosActuales().climaErrorFormatoInvalido);
   }
 
   const dias = mapearDias(datos, parcela.umbralCritico);
 
   if (dias.length === 0) {
-    throw new Error("No hay temperaturas disponibles para esta coordenada.");
+    throw new Error(obtenerTextosActuales().climaErrorSinTemperaturas);
   }
 
   return { zonaHoraria: datos.timezone, dias };
