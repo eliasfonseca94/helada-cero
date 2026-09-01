@@ -14,15 +14,21 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
           cache: maven
           cache-dependency-path: backend/pom.xml
+
+      # Git no trackea el bit +x de forma confiable en checkouts desde Windows;
+      # esto es un resguardo aparte de que el modo ya quedó corregido en el
+      # árbol de git (`git update-index --chmod=+x backend/mvnw`).
+      - name: Habilitar el Maven Wrapper como ejecutable
+        run: chmod +x mvnw
 
       - name: Run tests (H2, no Docker needed)
         run: ./mvnw --batch-mode -Dspring.profiles.active=test test
@@ -34,10 +40,10 @@ jobs:
     name: Frontend (TypeScript strict + build)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Node.js 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "20"
           cache: npm
