@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend (JUnit 5 + Mockito)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+
+      - name: Run tests (H2, no Docker needed)
+        run: ./mvnw --batch-mode -Dspring.profiles.active=test test
+
+      - name: Package (sanity check the jar builds)
+        run: ./mvnw --batch-mode -DskipTests package
+
+  frontend:
+    name: Frontend (TypeScript strict + build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check (strict mode)
+        run: npx tsc --noEmit
+
+      - name: Unit tests (Vitest)
+        run: npm run test
+
+      - name: Production build
+        run: npm run build

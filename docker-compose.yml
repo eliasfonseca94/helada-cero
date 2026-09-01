@@ -1,0 +1,64 @@
+# Levanta la app completa con un solo comando: `docker compose up --build`.
+#
+# Pensado para que cualquiera pueda ver el proyecto funcionando de punta a
+# punta sin instalar Java, Maven ni Node — solo Docker. Para desarrollar de
+# verdad (hot-reload de TypeScript y de Java) sigue siendo mejor el flujo de
+# `backend/docker-compose.yml` (solo Postgres) + `./mvnw spring-boot:run` +
+# `npm run dev`, documentado en el README.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: heladacero-postgres-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: heladacero_db
+      POSTGRES_USER: dev_user
+      POSTGRES_PASSWORD: SecureDevPassword123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev_user -d heladacero_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: heladacero-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: heladacero_db
+      DB_USERNAME: dev_user
+      DB_PASSWORD: SecureDevPassword123
+      # El navegador (no el contenedor) es quien llama a este origen, por eso
+      # es localhost:5173 y no el nombre de servicio "frontend".
+      CORS_ALLOWED_ORIGINS: http://localhost:5173
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Vite incrusta esta URL en el JS al momento de compilar. También es
+        # la que ve el navegador, así que apunta al puerto publicado en el
+        # host (8080), no a un nombre de servicio interno de Docker.
+        VITE_API_BASE_URL: http://localhost:8080
+    container_name: heladacero-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
