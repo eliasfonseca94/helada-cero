@@ -10,3 +10,4 @@ Detalles.md
 .env.local
 .env.*.local
 .env.production
+.vscode/
